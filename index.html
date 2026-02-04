@@ -24,7 +24,6 @@
     </h2>
 
     <div class="new-chat-item" onclick="startNewChat()">
-      <img src="images/paws.png" class="chat-icon" alt="New chat" />
       <span>New Chat</span>
       <span class="plus-icon">+</span>
     </div>
@@ -32,7 +31,6 @@
     <!-- Saved Chats (sticky for readability) -->
     <div class="saved-chats-sticky">
       <div id="savedChatsToggle" class="saved-chats-toggle" onclick="toggleSavedChatsDropdown()">
-        <img src="images/thumbtack_emoji.png" class="saved-chat-icon" alt="Saved chats" />
         <span>Saved Chats</span>
         <span class="carrot-icon">▼</span>
       </div>
@@ -50,8 +48,7 @@
     <div class="announcements-wrap">
 
       <div id="announcementsToggle" class="sidebar-section announcements-toggle" onclick="toggleAnnouncements()">
-        <img src="images/rocket_emoji.png" alt="Announcements" class="section-icon" />
-        <span class="section-title">Announcements + Updates</span>
+        <span class="section-title">Announcements & Updates</span>
         <span class="carrot-icon">▼</span>
       </div>
 
@@ -67,7 +64,6 @@
     <div class="huddles-wrap">
 
       <div id="huddlesToggle" class="sidebar-section huddles-toggle" onclick="toggleHuddles()">
-        <img src="images/huddles_emoji.png" alt="Weekly Huddles" class="section-icon" />
         <span class="section-title">Weekly Huddles</span>
         <span class="carrot-icon">▼</span>
       </div>
@@ -78,6 +74,22 @@
       </div>
 
       <div id="huddlesList" class="huddles-list"></div>
+
+    </div>
+
+    <div class="newsletters-wrap">
+
+      <div id="newslettersToggle" class="sidebar-section newsletters-toggle" onclick="toggleNewsletters()">
+        <span class="section-title">Weekly Newsletter</span>
+        <span class="carrot-icon">▼</span>
+      </div>
+
+      <div id="newsletterPin" class="newsletter-pin">
+        <span id="newsletterPinDate" class="newsletter-date"></span>
+        <span class="badge-new">NEW</span>
+      </div>
+
+      <div id="newslettersList" class="newsletters-list"></div>
 
     </div>
 

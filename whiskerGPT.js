@@ -12,6 +12,7 @@ let isReadOnlyMode = false;
 
 let isAnnouncementsVisible = false;
 let isHuddlesVisible = false;
+let isNewslettersVisible = false;
 
 let welcomeDismissed = false;
 
@@ -21,56 +22,139 @@ let isSettingsMenuOpen = false;
 /* Strong send lock to prevent double-send placeholder issues */
 let sendLock = false;
 
+const SEEN_BADGES_KEY = "whiskerSeenBadges";
+
 /* ===============================
    Static data
 =============================== */
 const ANNOUNCEMENTS = {
-  "11/10/25": [
-    "📌 Update — 11/10/25",
+  "2/3/26": [
+    [
+      "Whisker app v1.34 deployment",
+      "Whisker app v1.34 deployment has started. Customer apps will automatically update within the next seven days.😺",
+      "",
+      "There are a lot of new features, and bug fixes going out, but here are some of the big items that you need to know about:",
+      "",
+      "Whisker+ video storage feature: Whisker+ customers will be able to view captured videos from their LR5 Pro as far back as 30 days. LR5 Pro customers on the free Whisker app, will have access to two days of videos. Please note, free Whisker app users were previously able to view up to seven days of video history, this was not by design, but the result of a bug that was fixed with this release. Additional information is available at Key Feature Breakdown & FAQ for CX.",
+      "",
+      "App Performance: Multiple bug fixes and updates made to improve overall app performance and speed.",
+      "",
+      "Local times: Instead of the previous default UTC time for graphs, recaps and insights, customers will now see their pet usage information recorded in their local time zone."
+    ],
+    {
+      author: "Sharon Silva",
+      time: "9:52 AM",
+      title: "Friendly Reminder: Training on Performance Reviews",
+      lines: [
+        "In regards to the calendar invitation for the optional training on performance reviews scheduled for today, February 3rd at 3:00 PM EST, we ask that you ignore this calendar invite given the priorities and focus of your role.",
+        "",
+        "The content is a refresher and closely aligns with the performance review overview previously shared during the October Town Hall. However, this short, optional training will be recorded and shared afterward, should you find it helpful to review at your convenience.",
+        "",
+        "Thank you, team!"
+      ]
+    },
+    {
+      author: "Ryan Lewis",
+      time: "3:30 PM",
+      title: "Hard Power Cycle Process Update",
+      lines: [
+        "We recently received new guidance on how best to complete a hard power cycle on the LR4, LR5 and LR5 Pro, that should save you and your customers some time. Our original process was to unplug the robots for a minute, and then wait up to 90 seconds after plugging it back in to complete a hard power cycle. The updated process is as follows:",
+        "",
+        "Litter Robot 4- While powered on: unplug the robot, wait 15 seconds, plug the robot back in.",
+        "Litter Robot 5 / 5 Pro- While powered on: unplug the robot, wait 15 seconds, plug the robot back in, wait 60 seconds.",
+        "",
+        "In some cases, hard power cycles are required to resolve WiFi chip faults, camera initialization failures and interrupted OTA’s. Internal and external processes have been updated where this step is required."
+      ]
+    }
+  ],
+  "1/1/26": [
+    "📌 Update — 1/1/26",
     "This is a placeholder announcement page.",
     "Add your real update text here later."
   ],
-  "12/25/25": [
-    "🎄 Update — 12/25/25",
+  "1/15/26": [
+    "🎄 Update — 1/15/26",
     "Holiday update placeholder.",
     "More details can go here in separate bubbles."
   ],
-  "1/1/26": [
-    "🚀 NEW — 1/1/26",
+  "1/29/26": [
+    "🚀 NEW — 1/29/26",
     "Welcome to WhiskerGPT Announcements + Updates!",
     "This section is read-only and is not saved as a chat."
   ]
 };
 
 const HUDDLES = {
-  "11/10/25": {
-    title: "🎥 Weekly Huddle — 11/10/25",
+  "1/1/26": {
+    author: "Whisker Team",
+    time: "—",
+    title: "🎥 Weekly Huddle — 1/1/26",
     bodyLines: [
       "Placeholder notes for this weekly huddle.",
       "Add your key talking points here.",
-      "Date: 11/10/25"
+      "Date: 1/1/26"
     ],
     videoSrc: "huddle_videos/video_placeholder.mp4"
   },
-  "12/25/25": {
-    title: "🎥 Weekly Huddle — 12/25/25",
+  "1/15/26": {
+    author: "Whisker Team",
+    time: "—",
+    title: "🎥 Weekly Huddle — 1/15/26",
     bodyLines: [
       "Holiday week huddle placeholder.",
       "Add any updates and action items here.",
-      "Date: 12/25/25"
+      "Date: 1/15/26"
     ],
     videoSrc: "huddle_videos/video_placeholder.mp4"
   },
-  "1/1/26": {
-    title: "🎥 Weekly Huddle — 1/1/26",
+  "1/29/26": {
+    author: "Whisker Team",
+    time: "—",
+    title: "🎥 Weekly Huddle — 1/29/26",
     bodyLines: [
       "New Year huddle placeholder.",
       "Add the agenda, outcomes, and next steps here.",
-      "Date: 1/1/26"
+      "Date: 1/29/26"
     ],
     videoSrc: "huddle_videos/video_placeholder.mp4"
   }
 };
+
+const NEWSLETTERS = [
+  {
+    author: "Whisker Team",
+    time: "—",
+    date: "1/1/26",
+    title: "📰 Weekly Newsletter — 1/1/26",
+    bodyLines: [
+      "Placeholder newsletter update.",
+      "Add your real weekly highlights here.",
+      "Date: 1/1/26"
+    ]
+  },
+  {
+    author: "Whisker Team",
+    time: "—",
+    date: "1/15/26",
+    title: "📰 Weekly Newsletter — 1/15/26",
+    bodyLines: [
+      "Holiday week newsletter placeholder.",
+      "Add your weekly recap content here.",
+      "Date: 1/15/26"
+    ]
+  },
+  {
+    author: "Whisker Team",
+    time: "—",
+    date: "1/29/26",
+    title: "📰 Weekly Newsletter — 1/29/26",
+    bodyLines: [
+      "New Year newsletter placeholder.",
+      "Add updates, wins, and upcoming focus areas.",
+      "Date: 1/29/26"
+    ]
+  }
+];
 
 /* ===============================
    Helpers
@@ -84,8 +168,53 @@ function sortDatesNewestFirst(arr) {
   return arr.slice().sort((a, b) => parseMMDDYY(b) - parseMMDDYY(a));
 }
 
+function sortNewsletterNewestFirst(arr) {
+  return arr.slice().sort((a, b) => parseMMDDYY(b.date) - parseMMDDYY(a.date));
+}
+
+function loadSeenBadges() {
+  try {
+    const raw = localStorage.getItem(SEEN_BADGES_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveSeenBadges(next) {
+  try {
+    localStorage.setItem(SEEN_BADGES_KEY, JSON.stringify(next));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function isBadgeSeen(kind, dateStr) {
+  if (!kind || !dateStr) return false;
+  const seen = loadSeenBadges();
+  return !!seen?.[kind]?.[dateStr];
+}
+
+function markBadgeSeen(kind, dateStr) {
+  if (!kind || !dateStr) return;
+  const seen = loadSeenBadges();
+  if (!seen[kind]) seen[kind] = {};
+  seen[kind][dateStr] = true;
+  saveSeenBadges(seen);
+}
+
 function weekLabel(dateStr) {
-  return `Week of ${dateStr}`;
+  return dateStr;
+}
+
+function normalizeChatIcon(src) {
+  if (!src) return src;
+  if (src === "images/template_emoji.png") return "images/briefcase_icon.svg";
+  if (src === "images/notepad_emoji.png") return "images/document_search_icon.svg";
+  if (src === "images/paws.png") return "images/wrench_gear_icon.svg";
+  return src;
 }
 
 function makeId() {
@@ -276,23 +405,19 @@ function normalizeLoose(s) {
      AND the text includes "what part is this" or "what is this part".
 */
 function resolveHardcoded(userText, hasImageAttachedThisMessage) {
-  const exactNorm = normalizePrompt(userText);
-
-  for (const pair of HARDCODED_QA) {
-    if (exactNorm === normalizePrompt(pair.q)) {
-      if (pair.kind === "flow") return { type: "flow", id: pair.id };
-      return { type: "text", text: pair.a };
-    }
-  }
-
+  const raw = (userText || "").trim().toLowerCase();
   const loose = normalizeLoose(userText);
 
   if (hasImageAttachedThisMessage) {
     const wantsPart =
-      loose.includes("what part is this") ||
-      loose.includes("what is this part") ||
-      loose === "what part is this?" ||
-      loose === "what is this part?";
+      raw.length === 0 ||
+      raw.length < 20 ||
+      raw.includes("?") ||
+      loose.includes("what is this") ||
+      loose.includes("what part") ||
+      loose.includes("this part") ||
+      loose.includes("identify") ||
+      loose.includes("help");
 
     if (wantsPart) {
       const skuLink = "https://www.litter-robot.com/products/globe-liner-weight.html?sku=PLY-GLW-1001";
@@ -306,18 +431,48 @@ Plystick SKU - ${skuLink}`,
     }
   }
 
-  const hasPro = /\blr5\s*pro\b/.test(loose);
-  const hasHopper = /\bhopper\b/.test(loose);
-  const hasDisconnected = /\bdisconnected\b/.test(loose) || /\bdisconnect\b/.test(loose);
-  const hasNoHopper =
-    /\bno\b.*\bhopper\b/.test(loose) ||
-    /\bwithout\b.*\bhopper\b/.test(loose) ||
-    /\bnot\b.*\bhopper\b/.test(loose) ||
-    /\bno\s+hopper\s+attached\b/.test(loose) ||
-    /\bno\s+hopper\b/.test(loose);
+  const hasLr5 = loose.includes("lr5");
+  const hasDfiOrSensor = loose.includes("dfi") || loose.includes("sensor");
+  const hasCalibrate =
+    loose.includes("calibrate") || loose.includes("calibration") || loose.includes("reset");
 
-  if (hasPro && hasHopper && hasDisconnected && hasNoHopper) {
+  if (hasLr5 && hasDfiOrSensor && hasCalibrate) {
+    const pair = HARDCODED_QA.find((p) => p.kind === "text");
+    if (pair) return { type: "text", text: pair.a };
+  }
+
+  const hasHopper = loose.includes("hopper");
+  const hasDisconnected =
+    loose.includes("disconnected") || loose.includes("not attached") || loose.includes("error");
+  const hasLr5OrPro = loose.includes("lr5") || loose.includes("lr5 pro");
+
+  if (hasHopper && hasDisconnected && hasLr5OrPro) {
     return { type: "flow", id: "hopper_disconnected_lr5pro" };
+  }
+
+  return null;
+}
+
+function resolveKeywordTriggers(userText) {
+  const loose = normalizeLoose(userText);
+
+  const hasSkuOrPart = loose.includes("sku") || loose.includes("part number");
+  const hasLr5 = loose.includes("lr5");
+  const hasBase = loose.includes("base");
+  const hasBlack = loose.includes("black");
+
+  if ((hasLr5 && hasSkuOrPart) || (hasLr5 && hasBase && hasBlack)) {
+    return { type: "text", text: "Litter-Robot 5 Base (Black)\nSKU LR5-123-4567" };
+  }
+
+  const hasCx = loose.includes("cx");
+  const hasIssue = loose.includes("issue");
+  const hasTrackerOrIssue = loose.includes("tracker") || loose.includes("issue");
+  const hasLink =
+    loose.includes("link") || loose.includes("sheet") || loose.includes("excel");
+
+  if (hasCx && hasTrackerOrIssue && hasLink) {
+    return { type: "cxTracker" };
   }
 
   return null;
@@ -528,6 +683,18 @@ function toggleHuddles() {
   if (isHuddlesVisible) renderHuddlesUI();
 }
 
+function toggleNewsletters() {
+  const list = document.getElementById("newslettersList");
+  const toggle = document.getElementById("newslettersToggle");
+  if (!list || !toggle) return;
+
+  isNewslettersVisible = !isNewslettersVisible;
+  toggle.classList.toggle("open", isNewslettersVisible);
+  list.style.display = isNewslettersVisible ? "flex" : "none";
+
+  if (isNewslettersVisible) renderNewslettersUI();
+}
+
 /* ===============================
    Popups
 =============================== */
@@ -601,7 +768,13 @@ function renderAnnouncementsUI() {
   const newest = dates[0];
 
   pinDate.textContent = newest;
-  pin.onclick = () => openAnnouncement(newest);
+  pin.onclick = () => {
+    markBadgeSeen("announcements", newest);
+    renderAnnouncementsUI();
+    openAnnouncement(newest);
+  };
+  const badge = pin.querySelector(".badge-new");
+  if (badge) badge.style.display = isBadgeSeen("announcements", newest) ? "none" : "";
 
   list.innerHTML = "";
   dates.forEach((d) => {
@@ -609,7 +782,17 @@ function renderAnnouncementsUI() {
     const item = document.createElement("div");
     item.className = "announcement-item";
     item.textContent = d;
-    item.onclick = () => openAnnouncement(d);
+    const itemBadge = document.createElement("span");
+    itemBadge.className = "badge-new";
+    itemBadge.textContent = "NEW";
+    itemBadge.style.display =
+      d === newest && !isBadgeSeen("announcements", d) ? "" : "none";
+    item.appendChild(itemBadge);
+    item.onclick = () => {
+      markBadgeSeen("announcements", d);
+      renderAnnouncementsUI();
+      openAnnouncement(d);
+    };
     list.appendChild(item);
   });
 }
@@ -618,6 +801,11 @@ function openAnnouncement(dateStr) {
   const messages = document.getElementById("messages");
   if (!messages) return;
 
+  markBadgeSeen("announcements", dateStr);
+  const pin = document.getElementById("announcementPin");
+  const badge = pin?.querySelector?.(".badge-new");
+  if (badge) badge.style.display = "none";
+
   setReadOnlyMode(true);
   closeActivePopup();
   closeSettingsMenu();
@@ -625,25 +813,37 @@ function openAnnouncement(dateStr) {
   messages.innerHTML = "";
 
   const lines = ANNOUNCEMENTS[dateStr] || [`📌 Update — ${dateStr}`, "No content added yet."];
+  const blocks = Array.isArray(lines[0]) || typeof lines[0] === "object" ? lines : [lines];
 
-  const bubble = document.createElement("div");
-  bubble.className = "message assistant";
+  blocks.forEach((block) => {
+    const bubble = document.createElement("div");
+    bubble.className = "message assistant";
 
-  const header = document.createElement("div");
-  header.style.fontWeight = "700";
-  header.style.fontSize = "16px";
-  header.textContent = lines[0];
-  bubble.appendChild(header);
+    const meta = document.createElement("div");
+    meta.style.fontSize = "12px";
+    meta.style.opacity = "0.8";
+    const author = block?.author || "Ryan Lewis";
+    const time = block?.time || "9:00 AM";
+    meta.textContent = `${author} · ${time}`;
+    bubble.appendChild(meta);
 
-  lines.slice(1).forEach((line) => {
-    const p = document.createElement("div");
-    p.style.marginTop = "10px";
-    p.style.opacity = "0.95";
-    p.textContent = line;
-    bubble.appendChild(p);
+    const header = document.createElement("div");
+    header.style.fontWeight = "700";
+    header.style.fontSize = "16px";
+    header.textContent = block?.title || block[0];
+    bubble.appendChild(header);
+
+    const bodyLines = block?.lines || block.slice(1);
+    bodyLines.forEach((line) => {
+      const p = document.createElement("div");
+      p.style.marginTop = "10px";
+      p.style.opacity = "0.95";
+      p.textContent = line;
+      bubble.appendChild(p);
+    });
+
+    messages.appendChild(bubble);
   });
-
-  messages.appendChild(bubble);
   messages.scrollTop = messages.scrollHeight;
   updateJumpButton();
 }
@@ -661,7 +861,13 @@ function renderHuddlesUI() {
   const newest = dates[0];
 
   pinDate.textContent = weekLabel(newest);
-  pin.onclick = () => openHuddle(newest);
+  pin.onclick = () => {
+    markBadgeSeen("huddles", newest);
+    renderHuddlesUI();
+    openHuddle(newest);
+  };
+  const badge = pin.querySelector(".badge-new");
+  if (badge) badge.style.display = isBadgeSeen("huddles", newest) ? "none" : "";
 
   list.innerHTML = "";
   dates.forEach((d) => {
@@ -669,7 +875,17 @@ function renderHuddlesUI() {
     const item = document.createElement("div");
     item.className = "huddle-item";
     item.textContent = weekLabel(d);
-    item.onclick = () => openHuddle(d);
+    const itemBadge = document.createElement("span");
+    itemBadge.className = "badge-new";
+    itemBadge.textContent = "NEW";
+    itemBadge.style.display =
+      d === newest && !isBadgeSeen("huddles", d) ? "" : "none";
+    item.appendChild(itemBadge);
+    item.onclick = () => {
+      markBadgeSeen("huddles", d);
+      renderHuddlesUI();
+      openHuddle(d);
+    };
     list.appendChild(item);
   });
 }
@@ -677,6 +893,11 @@ function renderHuddlesUI() {
 function openHuddle(dateStr) {
   const messages = document.getElementById("messages");
   if (!messages) return;
+
+  markBadgeSeen("huddles", dateStr);
+  const pin = document.getElementById("huddlePin");
+  const badge = pin?.querySelector?.(".badge-new");
+  if (badge) badge.style.display = "none";
 
   setReadOnlyMode(true);
   closeActivePopup();
@@ -692,6 +913,14 @@ function openHuddle(dateStr) {
 
   const bubble = document.createElement("div");
   bubble.className = "message assistant";
+
+  const meta = document.createElement("div");
+  meta.style.fontSize = "12px";
+  meta.style.opacity = "0.8";
+  const author = data.author || "Whisker Team";
+  const time = data.time || "—";
+  meta.textContent = `${author} · ${time}`;
+  bubble.appendChild(meta);
 
   const title = document.createElement("div");
   title.style.fontWeight = "700";
@@ -715,6 +944,107 @@ function openHuddle(dateStr) {
     video.src = data.videoSrc;
     bubble.appendChild(video);
   }
+
+  messages.appendChild(bubble);
+  messages.scrollTop = messages.scrollHeight;
+  updateJumpButton();
+}
+
+/* ===============================
+   Newsletters UI
+=============================== */
+function renderNewslettersUI() {
+  const pin = document.getElementById("newsletterPin");
+  const pinDate = document.getElementById("newsletterPinDate");
+  const list = document.getElementById("newslettersList");
+  if (!pin || !pinDate || !list) return;
+
+  const sorted = sortNewsletterNewestFirst(NEWSLETTERS);
+  const newest = sorted[0];
+
+  pinDate.textContent = newest?.date || "";
+  pin.onclick = () => {
+    markBadgeSeen("newsletters", newest?.date);
+    renderNewslettersUI();
+    openNewsletter(newest?.date);
+  };
+  const badge = pin.querySelector(".badge-new");
+  if (badge) badge.style.display = isBadgeSeen("newsletters", newest?.date) ? "none" : "";
+
+  list.innerHTML = "";
+  sorted.forEach((n) => {
+    if (n.date === newest?.date) return;
+    const item = document.createElement("div");
+    item.className = "newsletter-item";
+    item.textContent = n.date;
+    const itemBadge = document.createElement("span");
+    itemBadge.className = "badge-new";
+    itemBadge.textContent = "NEW";
+    itemBadge.style.display =
+      n.date === newest?.date && !isBadgeSeen("newsletters", n.date) ? "" : "none";
+    item.appendChild(itemBadge);
+    item.onclick = () => {
+      markBadgeSeen("newsletters", n.date);
+      renderNewslettersUI();
+      openNewsletter(n.date);
+    };
+    list.appendChild(item);
+  });
+}
+
+function openNewsletter(dateStr) {
+  const messages = document.getElementById("messages");
+  if (!messages) return;
+
+  markBadgeSeen("newsletters", dateStr);
+  const pin = document.getElementById("newsletterPin");
+  const badge = pin?.querySelector?.(".badge-new");
+  if (badge) badge.style.display = "none";
+
+  setReadOnlyMode(true);
+  closeActivePopup();
+  closeSettingsMenu();
+
+  messages.innerHTML = "";
+
+  const data = NEWSLETTERS.find((n) => n.date === dateStr) || {
+    title: `📰 Weekly Newsletter — ${dateStr || "N/A"}`,
+    date: dateStr || "",
+    bodyLines: ["No content added yet."]
+  };
+
+  const bubble = document.createElement("div");
+  bubble.className = "message assistant";
+
+  const meta = document.createElement("div");
+  meta.style.fontSize = "12px";
+  meta.style.opacity = "0.8";
+  const author = data.author || "Whisker Team";
+  const time = data.time || "—";
+  meta.textContent = `${author} · ${time}`;
+  bubble.appendChild(meta);
+
+  const title = document.createElement("div");
+  title.style.fontWeight = "700";
+  title.style.fontSize = "16px";
+  title.textContent = data.title;
+  bubble.appendChild(title);
+
+  if (data.date) {
+    const dateLine = document.createElement("div");
+    dateLine.style.marginTop = "6px";
+    dateLine.style.opacity = "0.9";
+    dateLine.textContent = data.date;
+    bubble.appendChild(dateLine);
+  }
+
+  data.bodyLines.forEach((line) => {
+    const p = document.createElement("div");
+    p.style.marginTop = "10px";
+    p.style.opacity = "0.95";
+    p.textContent = line;
+    bubble.appendChild(p);
+  });
 
   messages.appendChild(bubble);
   messages.scrollTop = messages.scrollHeight;
@@ -863,6 +1193,32 @@ function addAssistantStreamed(text, { save = true, imageSrc = null } = {}) {
       updateJumpButton();
     });
   }, 160);
+}
+
+function addAssistantRichHTML(html, { save = true, plainText = "" } = {}) {
+  const messages = document.getElementById("messages");
+  if (!messages) return;
+
+  const bubble = document.createElement("div");
+  bubble.className = "message assistant";
+  bubble.innerHTML = html;
+  messages.appendChild(bubble);
+  messages.scrollTop = messages.scrollHeight;
+
+  if (save) {
+    createChatIfNeeded();
+    const idx = getChatIndexById(currentChatId);
+    if (idx !== -1) {
+      savedChats[idx].conversation.push({
+        role: "assistant",
+        text: plainText || ""
+      });
+    }
+    touchChat(currentChatId);
+    updateSavedChatsDropdown();
+  }
+
+  updateJumpButton();
 }
 
 /* ===============================
@@ -1118,6 +1474,7 @@ function sendMessage() {
   updateSavedChatsDropdown();
 
   const resolved = resolveHardcoded(text, !!sentImage);
+  const keywordResolved = !resolved ? resolveKeywordTriggers(text) : null;
 
   /* If user sends ONLY an image, do not send placeholder */
   if (!text && sentImage && !resolved) return;
@@ -1134,6 +1491,25 @@ function sendMessage() {
 
   if (resolved && resolved.type === "text") {
     addAssistantStreamed(resolved.text);
+    return;
+  }
+
+  if (keywordResolved && keywordResolved.type === "text") {
+    addAssistantStreamed(keywordResolved.text);
+    return;
+  }
+
+  if (keywordResolved && keywordResolved.type === "cxTracker") {
+    const html = `
+<div>Here is the link for the "CX Issue Tracker":</div>
+<a href="https://example.com/cx-issue-tracker" target="_blank" rel="noopener noreferrer">CX Issue Tracker</a>
+<div style="margin-top: 8px; padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.25); display: inline-block;">
+  <div>CX Issue Tracker.xlsx</div>
+  <div style="font-size: 12px; opacity: 0.8;">Excel file (placeholder)</div>
+</div>`;
+    addAssistantRichHTML(html, {
+      plainText: 'Here is the link for the "CX Issue Tracker":\nCX Issue Tracker\nCX Issue Tracker.xlsx'
+    });
     return;
   }
 
@@ -1207,9 +1583,6 @@ function updateSavedChatsDropdown() {
       loadChatById(chat.id);
     });
 
-    const icon = document.createElement("img");
-    icon.src = chat.icon || "images/paws.png";
-    icon.className = "chat-icon saved-chat-icon";
 
     const nameSpan = document.createElement("span");
     nameSpan.className = "chat-name";
@@ -1230,57 +1603,11 @@ function updateSavedChatsDropdown() {
       const renameBtn = document.createElement("button");
       renameBtn.textContent = "Rename";
 
-      const iconBtn = document.createElement("button");
-      iconBtn.textContent = "Change Icon";
-
-      popup.append(renameBtn, iconBtn);
+      popup.append(renameBtn);
 
       renameBtn.onclick = () => {
         closeActivePopup();
         startInlineRename(chat);
-      };
-
-      iconBtn.onclick = (ev) => {
-        ev.stopPropagation();
-        popup.innerHTML = "";
-
-        const iconContainer = document.createElement("div");
-        iconContainer.style.display = "flex";
-        iconContainer.style.gap = "10px";
-        iconContainer.style.alignItems = "center";
-
-        const options = [
-          { src: "images/template_emoji.png", tooltip: "Templates", w: 34, h: 34 },
-          { src: "images/notepad_emoji.png", tooltip: "Notes", w: 34, h: 34 },
-          { src: "images/paws.png", tooltip: "Chat", w: 34, h: 34 }
-        ];
-
-        options.forEach((opt) => {
-          const wrap = document.createElement("span");
-          wrap.className = "icon-choice";
-          wrap.setAttribute("data-tooltip", opt.tooltip);
-
-          const img = document.createElement("img");
-          img.src = opt.src;
-          img.style.width = opt.w + "px";
-          img.style.height = opt.h + "px";
-          img.style.objectFit = "contain";
-          img.style.cursor = "pointer";
-
-          img.onclick = (clickEv) => {
-            clickEv.stopPropagation();
-            chat.icon = opt.src;
-            touchChat(chat.id);
-            updateSavedChatsDropdown();
-            closeActivePopup();
-          };
-
-          wrap.appendChild(img);
-          iconContainer.appendChild(wrap);
-        });
-
-        popup.appendChild(iconContainer);
-        popup.style.display = "flex";
       };
 
       document.body.appendChild(popup);
@@ -1291,7 +1618,7 @@ function updateSavedChatsDropdown() {
       activePopup = popup;
     });
 
-    chatItem.append(icon, nameSpan, ellipsis);
+    chatItem.append(nameSpan, ellipsis);
     list.appendChild(chatItem);
   });
 
@@ -1336,9 +1663,9 @@ document.addEventListener("click", (e) => {
 
   const menu = document.getElementById("settingsMenu");
   const settingsIcon = document.getElementById("settingsIcon");
-  if (isSettingsMenuOpen && menu && settingsIcon) {
+  if (isSettingsMenuOpen && menu) {
     const clickedMenu = menu.contains(e.target);
-    const clickedIcon = settingsIcon.contains(e.target);
+    const clickedIcon = settingsIcon ? settingsIcon.contains(e.target) : false;
     if (!clickedMenu && !clickedIcon) closeSettingsMenu();
   }
 });
@@ -1456,6 +1783,7 @@ loadTheme();
 
 renderAnnouncementsUI();
 renderHuddlesUI();
+renderNewslettersUI();
 
 updateSavedChatsDropdown();
 updateSendButtonState();

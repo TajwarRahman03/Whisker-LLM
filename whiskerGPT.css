@@ -133,42 +133,11 @@ body {
   color: #000;
 }
 
-.new-chat-item img,
-.saved-chats-toggle img {
-  flex: 0 0 28px;
-  display: block;
-}
-
-.new-chat-item .chat-icon {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  opacity: 0.6;
-  margin-right: 8px;
-  transition: transform 0.2s, opacity 0.2s;
-}
-
-.saved-chat-icon {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  margin-right: 8px;
-
-  opacity: 0.6;
-  transition: transform 0.2s, opacity 0.2s;
-}
-
 .new-chat-item:hover,
 .saved-chats-toggle:hover {
   filter: drop-shadow(0 0 6px rgba(247, 174, 59, 0.6));
   transform: scale(1.01);
   background: rgba(255, 255, 255, 0.10);
-}
-
-.new-chat-item:hover .chat-icon,
-.saved-chats-toggle:hover .saved-chat-icon {
-  transform: scale(1.2);
-  opacity: 1;
 }
 
 .plus-icon {
@@ -361,15 +330,16 @@ body {
    Resources: Announcements + Huddles
 =============================== */
 .announcements-wrap,
-.huddles-wrap {
+.huddles-wrap,
+.newsletters-wrap {
   margin-top: 8px;
 }
 
 .sidebar-section.announcements-toggle,
-.sidebar-section.huddles-toggle {
+.sidebar-section.huddles-toggle,
+.sidebar-section.newsletters-toggle {
   display: flex;
   align-items: center;
-  gap: 8px;
   padding: 8px 12px;
   border-radius: 12px;
   cursor: pointer;
@@ -381,26 +351,23 @@ body {
   transition: filter 0.2s ease, transform 0.2s ease, background 0.2s ease;
 }
 
-.section-icon {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-}
-
 .sidebar-section.announcements-toggle:hover,
-.sidebar-section.huddles-toggle:hover {
+.sidebar-section.huddles-toggle:hover,
+.sidebar-section.newsletters-toggle:hover {
   filter: drop-shadow(0 0 6px rgba(247, 174, 59, 0.6));
   transform: scale(1.01);
   background: rgba(255, 255, 255, 0.10);
 }
 
 .announcements-toggle.open .carrot-icon,
-.huddles-toggle.open .carrot-icon {
+.huddles-toggle.open .carrot-icon,
+.newsletters-toggle.open .carrot-icon {
   transform: rotate(180deg);
 }
 
 .announcement-pin,
-.huddle-pin {
+.huddle-pin,
+.newsletter-pin {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -415,19 +382,23 @@ body {
 }
 
 .announcement-pin:hover,
-.huddle-pin:hover {
+.huddle-pin:hover,
+.newsletter-pin:hover {
   background: rgba(255, 255, 255, 0.10);
   transform: scale(1.01);
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.26);
 }
 
 .announcement-date,
-.huddle-date {
+.huddle-date,
+.newsletter-date {
   color: #000;
   font-weight: 700;
 }
 
 .badge-new {
+  position: relative;
+  overflow: hidden;
   margin-left: auto;
   font-size: 11px;
   font-weight: 800;
@@ -438,8 +409,25 @@ body {
   letter-spacing: 0.3px;
 }
 
+.badge-new::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.35) 45%, transparent 80%);
+  opacity: 0;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.badge-new:hover::after {
+  transform: translateX(120%);
+  opacity: 1;
+}
+
 .announcements-list,
-.huddles-list {
+.huddles-list,
+.newsletters-list {
   display: none;
   flex-direction: column;
   gap: 6px;
@@ -448,7 +436,8 @@ body {
 }
 
 .announcement-item,
-.huddle-item {
+.huddle-item,
+.newsletter-item {
   background: transparent;
   padding: 8px 10px;
   border-radius: 10px;
@@ -461,7 +450,8 @@ body {
 }
 
 .announcement-item:hover,
-.huddle-item:hover {
+.huddle-item:hover,
+.newsletter-item:hover {
   background: rgba(255, 255, 255, 0.10);
   transform: scale(1.01);
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.26);
