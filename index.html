@@ -25,14 +25,22 @@
 
     <div class="new-chat-item" onclick="startNewChat()">
       <span>New Chat</span>
-      <span class="plus-icon">+</span>
+      <span class="plus-icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+          <path d="M8 3.5v9M3.5 8h9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
     </div>
 
     <!-- Saved Chats (sticky for readability) -->
     <div class="saved-chats-sticky">
       <div id="savedChatsToggle" class="saved-chats-toggle" onclick="toggleSavedChatsDropdown()">
         <span>Saved Chats</span>
-        <span class="carrot-icon">▼</span>
+        <span class="carrot-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+            <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
       </div>
 
       <div id="savedChatsList" class="saved-chats-list"></div>
@@ -49,7 +57,11 @@
 
       <div id="announcementsToggle" class="sidebar-section announcements-toggle" onclick="toggleAnnouncements()">
         <span class="section-title">Announcements & Updates</span>
-        <span class="carrot-icon">▼</span>
+        <span class="carrot-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+            <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
       </div>
 
       <div id="announcementPin" class="announcement-pin">
@@ -65,7 +77,11 @@
 
       <div id="huddlesToggle" class="sidebar-section huddles-toggle" onclick="toggleHuddles()">
         <span class="section-title">Weekly Huddles</span>
-        <span class="carrot-icon">▼</span>
+        <span class="carrot-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+            <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
       </div>
 
       <div id="huddlePin" class="huddle-pin">
@@ -81,7 +97,11 @@
 
       <div id="newslettersToggle" class="sidebar-section newsletters-toggle" onclick="toggleNewsletters()">
         <span class="section-title">Weekly Newsletter</span>
-        <span class="carrot-icon">▼</span>
+        <span class="carrot-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+            <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
       </div>
 
       <div id="newsletterPin" class="newsletter-pin">

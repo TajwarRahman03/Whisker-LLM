@@ -820,11 +820,18 @@ function openAnnouncement(dateStr) {
     bubble.className = "message assistant";
 
     const meta = document.createElement("div");
+    meta.className = "resource-header";
     meta.style.fontSize = "12px";
     meta.style.opacity = "0.8";
     const author = block?.author || "Ryan Lewis";
     const time = block?.time || "9:00 AM";
-    meta.textContent = `${author} · ${time}`;
+    const avatar = document.createElement("span");
+    avatar.className = "resource-avatar";
+    avatar.textContent = (author || "R").trim().charAt(0).toUpperCase();
+    const metaText = document.createElement("span");
+    metaText.textContent = `${author} · ${time}`;
+    meta.appendChild(avatar);
+    meta.appendChild(metaText);
     bubble.appendChild(meta);
 
     const header = document.createElement("div");
